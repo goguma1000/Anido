@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Tiger Mask
+  m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Armature_Tiger
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/pelvis.L
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/pelvis.R
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Spine.01
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/collar.L
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/collar.R
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/Neck
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/Neck/Head
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/Neck/Head/Ear.L
+    m_Weight: 1
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/Neck/Head/Ear.L/Ear.001.L
+    m_Weight: 1
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/Neck/Head/Ear.L/Ear.001.L/Ear.002.L
+    m_Weight: 1
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/Neck/Head/Ear.L/Ear.001.L/Ear.002.L/Ear.003.L
+    m_Weight: 1
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/Neck/Head/Ear.R
+    m_Weight: 1
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/Neck/Head/Ear.R/Ear.001.R
+    m_Weight: 1
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/Neck/Head/Ear.R/Ear.001.R/Ear.002.R
+    m_Weight: 1
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/Neck/Head/Ear.R/Ear.001.R/Ear.002.R/Ear.003.R
+    m_Weight: 1
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/shoulder.L
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/shoulder.L/upperarm.L
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/shoulder.L/upperarm.L/lowerarm.L
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/shoulder.L/upperarm.L/lowerarm.L/hand.L
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/shoulder.R
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/shoulder.R/upperarm.R
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/shoulder.R/upperarm.R/lowerarm.R
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Spine.01/Spine.02/Chest/shoulder.R/upperarm.R/lowerarm.R/hand.R
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/Tail
+    m_Weight: 1
+  - m_Path: Armature_Tiger/Hips/Tail/Tail.001
+    m_Weight: 1
+  - m_Path: Armature_Tiger/Hips/Tail/Tail.001/Tail.002
+    m_Weight: 1
+  - m_Path: Armature_Tiger/Hips/Tail/Tail.001/Tail.002/Tail.003
+    m_Weight: 1
+  - m_Path: Armature_Tiger/Hips/Tail/Tail.001/Tail.002/Tail.003/Tail.004
+    m_Weight: 1
+  - m_Path: Armature_Tiger/Hips/Tail/Tail.001/Tail.002/Tail.003/Tail.004/Tail.005
+    m_Weight: 1
+  - m_Path: Armature_Tiger/Hips/Tail/Tail.001/Tail.002/Tail.003/Tail.004/Tail.005/Tail.006
+    m_Weight: 1
+  - m_Path: Armature_Tiger/Hips/upperleg.L
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/upperleg.L/lowerleg.L
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/upperleg.L/lowerleg.L/foot.L
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/upperleg.L/lowerleg.L/foot.L/toe.L
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/upperleg.R
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/upperleg.R/lowerleg.R
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/upperleg.R/lowerleg.R/foot.R
+    m_Weight: 0
+  - m_Path: Armature_Tiger/Hips/upperleg.R/lowerleg.R/foot.R/toe.R
+    m_Weight: 0
+  - m_Path: Tiger
+    m_Weight: 0
