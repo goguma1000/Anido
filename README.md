@@ -1,254 +1,109 @@
-## Server Specification
+# **Anido**
+REST API를 이용한 2인 멀티플레이 보드게임.
 
-- project : gradle-Groovy
-- Language : java
-- Spring Boot Version : 2.7.11
-- Java Version : 11
-- 참고 홈페이지 : [https://start.spring.io/](https://start.spring.io/)
+코드 경로: [Scripts](https://github.com/goguma1000/Anido/tree/main/MSE_gameProject/Assets/Scripts)
+## **목차**  
+**[게임 워크플로우](#게임-워크플로우)**  
+**[징에믈 설치](#장애물-설치)**  
+**[로비](#로비)**  
+**[매칭 룸](#매칭-룸)**  
 
-## 계층 구조
-
-### DB 구조
-
-DB를 바꿀 수 있도록, MemberRepository 라는 interface 사용  
- 다른 DB를 이용하고자 한다면, 구현 class만 바꾸면 된다. <br>
-
-![DB 구조](/readmeImg/repository.png)
-
-### 폴더 계층 구조
-
-폴더의 형태는 아래 이미지와 같다.
-
-![폴더 구조](/readmeImg/struct.png)
-
-Controller : MVC에서 Controller를 의미한다.  
-service : 핵심 로직들을 구현한 곳.  
-repository : DB 접근을 위한 것들.  
-domain : 서비스와 관련된 객체들이 들어있는 곳
-
-## UML
-
-### Class Diagram
-
-# server 회의 내용
-
-![폴더 구조](/readmeImg/gameService.png)
-
-## <이동관련한 내용만 포함됨>
-
-## api 사용법
-
-## UserController  
-### 1. Sign-Up
-- description : sign-up
-- method : post
-- url : "http://localhost:8080/user/sign-up"
-- input format : {"name" : {string}, "password" : {string}}
-- output format : <br> {"response" : true || false}
-
-
-### 2. Sign-In
-- description : sign-in
-- method : post
-- url : http://localhost:8080/user/sign-in
-- input format : {"name" : {string}, "password" : {string}}
-- output format : {"response" : true || false}
-
-### 3. find All Users
-- description : find all users
-- method : get
-- url : http://localhost:8080/find-all
-- input format : x
-- output formate= : [ {"id" : {Long}, "name" : {string}, "password" : {string}} ... ]
-
-
-## GameController 
-### 1. player turn set
-  - description : Set Player's Turn
-  - method : Post
-  - url : http://localhost:8080/current/player-turn-set
-  - input format : {"turn" {String}}
-  - Note: The string that turn can have is "player1" or "player2"
-  - output : {"valid" : true || false}
-
-
-### 2. get turn information
-  - description : Check Player's Turn
-  - method : Get
-  - url : http://localhost:8080/current/player-turn-info
-  - input format : x
-  - output format : {"turn" : {string}}
-
-### 3. Player position & obstacle install information update 
-- description : Update player location and obstacle installation information
-- method : post
-- url : http://localhost:8080/action/update/player
-- input format : {<br>
-    "playerNumber" :{int},<br>
-    "action" : {String},<br>
-    "x1" : {int},<br>
-    "y1" : {int},<br>
-    "x2" : {int/ default는 -1},<br>
-    "y2" : {int/ default는 -1}<br>
+---
+### **게임 워크플로우**
+각 턴마다 30초에 시간이 주어진다.  
+플레이어는 다음과 같은 State를 가진다.
+~~~cs
+public enum PlayerState
+{
+    MYTURN,     //나의 턴인 상태
+    SENDING,    //서버에 데이터를 전송 중인 상태
+    UPDATING,   // 동기화 할 데이터를 받은 후 동기화하고 있는 상태
+    WAITING,    // 턴이 바뀌기를 기다리는 상태
+    OTHERTURN,  // 다른 플레이어의 턴인 상태 
+    AFTERVALID, // 해당 칸에 장애물을 설치 할 수 있는 상태
+    GAMEOVER    // 승패가 판정 난 상태
 }
-- output format : {"valid" : true || false}
-- output format : x
-- note : The possible states for an action are "moving" or   
-  "blocking" || possible states for an playerNumber are 1 or 2 
+~~~
+게임은 다음과 같이 진행된다.
 
-### 4. get player information
-- description : get player information
-- method : post
-- url : http://localhost:8080/fetch/info/player
-- input format : int playerNum
-- output format : Player
-- input : {
-    "action" : {"moving" | "blocking"}  
-    "row1" : {int}  
-    "col1" : {int}  
-    "row2" : {int}  
-    "col2" : {int}  
-  }
+**Flow Chart**  
 
-### 5. Obstacle installation vaild check
-- description : It is responsible for verifying the validity of the obstacle installation.
-- method : post
-- url : http://localhost:8080/install/block/valid
-- input format : {<br>
-  "row1" : {int}  
-  "col1" : {int}  
-  "row2" : {int}  
-  "col2" : {int}  
-}
-- output format : {"valid" : true | false}
+![그림6](https://github.com/goguma1000/Anido/assets/102130574/30af86a6-c2bc-4db9-ad7f-4f1b818d9c2c)
 
-### 6. install obstacle
-- description : Install obstacle.
-- method : post
-- url : http://localhost:8080/install/block
-- input format : {<br>
-  "row1" : {int}
-  "col1" : {int}
-  "row2" : {int}
-  "col2" : {int}
-}
-- output : {"valid" : true | false}
-
-### 7. Save results after the end of the game
-- description : After the game, update information on wins and losses.
-- method : post
-- url : http://localhost:8080/game/end
-- input format : {<br>
-  "winner" : {int}  
-  "loser" : {int}  
-}
-- output format : {"valid" : true | false}
+1. State가 MYTURN인 플레이어는 말을 움직일지, 장애물을 설치할지 선택한다.  
+2. 장애물을 선택한 경우  
+   1. 장애물을 설치 할 칸을 선택한다.
+   2. 해당 칸에 설치 할 수 있는지 확인하기 위해 서버에 쿼리를 보낸다.(State = SENDING)
+   3. 설치 할 수 없는 칸이면 2.1과정을 다시 수행한다.
+   4. 설치 할 수 있는 칸이면 (State = AFTERVALID) 서버에 장애물을 설치 할 좌표를 보낸다. (State = SENDING)
+3. 말 이동을 선택한 경우
+    1. 말을 움직일 칸을 선택한다.
+    2. 서버에 말이 움직일 칸의 좌표를 보낸다(State = SENDING)
+4. 선택한 행동에 대한 데이터를 보낸 후 상대방이 해당 데이터를 동기화하고 턴을 변경할 때 까지 기다린다.   (State = Waiting)  
+   이 때 서버에 계속 쿼리를 보내 상대방이 턴을 변경했는지 확인한다.
+5. 상대방이 동기화를 끝내고 턴을 변경하면 나의 턴을 바꾼다.(State = OTHERTURN)
+6. State가 OTHERTURN인 플레이어는 서버에 계속 쿼리를 보내 상대방의 행동에 대한 데이터가 왔는지 확인한다.
+7. 행동에 대한 데이터가 오면 보드판을 업데이트한다.(State = UPDATING)
+8. 업데이트가 끝나면 나의 턴을 변경하고 (State = MYTUEN) 서버에 턴을 변경했다고 알린다.
+9. 1-8의 과정을 반복하다가 어느 플레이어가 승리조건을 만족하면 게임을 종료하고(State = GAMEOVER) 승패결과를 서버에 보낸다.
   
-## RoomController
-### 1. Join Room1
-- description : Allows a player to join the room
-- method : post
-- url : http://localhost:8080/room/join1
-- input format : {  
-  "name" : {string},  
-  "password" : {string},  
-  "win" : {int}, "lose" : {int}  
-}  <br><br>
--output format : {    
-  "id": {int}, "name": {string},  
-  "password": {string},  
-  "win": {int}, "lose": {int}   
-}
+만약 각 턴당 주어진 시간이 초과되면 다음과 같이 진행된다.  
 
-### 2. Join Room2
-- description : Allows a player to join the room.
-- method : post
-- url : http://localhost:8080/room/join2
-- input format : {  
-  "name": {string}, "password": {string},  
-  "win": {int}, "lose": {int}  
-} <br><br>
-- output format :{    
-  "id": {int}, "name": {string},  
-  "password": {string},  
-  "win": {int}, "lose": {int}   
-}<br><br>
+1. State가 MYTURN인경우 서버에 행동 데이터로 -1 값을 보내고 턴을 변경한다.
+2. State가 OTHERTURN인경우 30초 동안 새로운 행동데이터가 오지 않으면 상대방이 게임을 나갔다고 판단하고 게임을 종료한다.  
+</br>
 
-### 3. start Game
-- description : Starts the game if the host and a waiting player are  
-present and the game start button is pressed.
-- method : post
-- url : http://localhost:8080/room/start
-- input format : {  
-  "gameStartButtonPressed" : {Boolean}  
-} <br><br>
-- output format : [  
-"host": {  
-  "id": {Long}, "name": {string},  
-  "password": {string},  
-  "win": {int}, "lose": {int}  
-},  
-"waitingPlayer": {  
-  "id": {Long}, "name": {string},  
-  "password": {string},  
-  "win": {int}, "lose": {int}  
-},  
-"hostReady": {boolean},  
-"waitingPlayerReady": {boolean},  
-"message": {string},  
-"gameStarted": {boolean},  
-"hostCheck": {boolean}  
-]
+ **관련 코드 링크 :**  
+    [GameManager.cs](https://github.com/goguma1000/Anido/blob/main/MSE_gameProject/Assets/Scripts/GameManager.cs)   
+    [GameClient.cs](https://github.com/goguma1000/Anido/blob/main/MSE_gameProject/Assets/Scripts/GameClient.cs)  
+    [TimerManager.cs](https://github.com/goguma1000/Anido/blob/main/MSE_gameProject/Assets/Scripts/TimerManager.cs)  
+    </br>
+    
+### **장애물 설치**
+![그림1](https://github.com/goguma1000/Anido/assets/102130574/a7860ac6-bc36-4675-82de-26ebf79f9e00) | ![그림2](https://github.com/goguma1000/Anido/assets/102130574/c90997de-36d1-4740-a29c-b1d50dee36d6)
+---|---|   
+</br>
 
-### 4. get waiting player information
-- description : Returns the waiting player information.
-- method : get
-- url : http://localhost:8080/room/waitingPlayer
-- intput format : x
-- output format : {  
-  "id" : {int}, "name" : {string},  
-  "password" : {string},  
-  "win" : {int}, "lose" : {int}  
-  }
+장애물은 90º or -90º 만큼 회전할 수 있다.  
+장애물을 곂쳐서 설치할 수 없다.  
+상대방이 반대편 라인에 도달할 수 없도록하는 위치에 장애물을 설치할 수 없다.  
 
-### 5. get game start status
-- description : Returns the game start status.
-- method : get
-- url : http://localhost:8080/room/startstatus
-- input format : x
-- output format : {
-  "return" : {boolean}
-}
+ **관련 코드 링크 :**  
+    [CreateObstacle.cs](https://github.com/goguma1000/Anido/blob/main/MSE_gameProject/Assets/Scripts/CreateObstacle.cs) 
+    </br></br>  
 
-### 6. get map by index
-- description : Returns the map theme at the specified index.
-- method : get
-- url : http://localhost:8080/room/maps
-- input format : x
-- output format :  
-      @param idx The index of the theme in the array  
-      localhost:8080/room/maps?idx=value (0 or 1)  
-      @return The map theme at the specified index. 
+### **로비**
+로비는 다음과 같이 구성되어 있다. 
 
-### 7. reset room
-- description : resets the room by initializing hostInfo,   waitingPlayerInfo, and isGameStart
-- method : post
-- url : http://localhost:8080/room/reset
-- input format : x
-- output format : {
- "success message" : "Room reset successfully"
-}
-## server-client 통신 api 호출 시나리오
---------------------------
-### 플레이어1 차례로 가정
-  1. 이동한 경우
-      - step1 : updatePlayerInfo(PlayerForm) : Validation
-      - step2 : setPlayerTurnInfo(TurnForm) : Validation   
-      [플레이엉 좌표정보 업데이트 -> 차례 넘김]
-      
-  <br><br>
-  1. 장애물을 설치하는 경우  
-     - step1 : IsValidInstall(Obstacle) : Validation
-     - step2 : updatePlayerInfo(PlayerForm) : Validation
-     - step3 : - step2 : setPlayerTurnInfo(TurnForm) : Validation  
-      [장애물 유효성 검사 -->장애물 설치 정보 반영 -> 차례넘김]
+![그림8](https://github.com/goguma1000/Anido/assets/102130574/4913a37c-4b89-4750-9d97-daabb306de26)  
+- 매칭 룸 생성  
+   Create Game 버튼을 누르면 맵을 선택할 수 있는 UI가 뜬다.  
+
+   ![그림4](https://github.com/goguma1000/Anido/assets/102130574/cc46b8a2-de5b-40d7-996d-26ba70f73d5b)
+
+   Create 버튼을 누르면 서버에 선택한 맵 정보와 유저 데이터를 보내어 매칭 룸을 생성한다. 
+
+- 매칭 룸 참가
+  Join Game 버튼을 누르면 서버에 유저 데이터를 보내어 매칭 룸에 접속한다.  
+  이때 매칭 룸에 정상적으로 접속하면 서버에서 호스트 유저 정보를 받을 수 있다.     
+ </br>  
+
+ **관련 코드 링크 :**  
+    [LobbyManager.cs](https://github.com/goguma1000/Anido/blob/main/MSE_gameProject/Assets/Scripts/LobbyManager.cs) 
+    </br></br>  
+
+### **매칭 룸**
+매칭 룸은 다음과 같이 구성되어 있다.
+
+**Flow Chart**  
+
+![그림3](https://github.com/goguma1000/Anido/assets/102130574/e92ed6ac-109f-4208-8d9d-2c76449abefc)  
+
+접속한 유저가 호스트면 계속  서버에 쿼리를 날려 다른 유저가 방에 들어왔는지 확인한다.  
+만약 다른 유저가 들어오면 다른 유저의 정보를 화면에 업데이트하고 게임 시작 버튼을 활성화한다.  
+접속한 유저가 호스트가 아니면 화면에 호스트 정보를 업데이트하고 호스트가 게임을 시작할 때까지 기다린다.  
+</br>  
+
+ **관련 코드 링크 :**  
+    [WaitingRoomManager.cs](https://github.com/goguma1000/Anido/blob/main/MSE_gameProject/Assets/Scripts/WaitingRoomManager.cs) 
+    </br></br>  
