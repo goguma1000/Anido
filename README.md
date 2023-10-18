@@ -3,7 +3,7 @@ REST API를 이용한 2인 멀티플레이 보드게임.
 
 코드 경로: [Scripts](https://github.com/goguma1000/Anido/tree/main/MSE_gameProject/Assets/Scripts)  
 
-**트레일러:** [Link](https://youtu.be/aqVc1HXOh_s)
+**트레일러:** [Link](https://youtu.be/aqVc1HXOh_s) (01:04)  
 ## **목차**  
 **[게임 워크플로우](#게임-워크플로우)**  
 **[징에믈 설치](#장애물-설치)**  
